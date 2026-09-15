@@ -5,14 +5,12 @@ jupytext:
   text_representation:
     extension: .md
     format_name: myst
+    format_version: 0.13
+    jupytext_version: 1.19.5
 kernelspec:
   display_name: Python 3 (ipykernel)
   language: python
   name: python3
-language_info:
-  name: python
-  pygments_lexer: ipython3
-  nbconvert_exporter: python
 ---
 
 # indexation et *slicing*
@@ -24,21 +22,12 @@ from matplotlib import pyplot as plt
 
 +++ {"tags": ["framed_cell"]}
 
-## contenu de ce notebook (sauter si déjà acquis)
-
-* les manières d'accéder à des éléments et de slicer un tableau `numpy`
-* les slices sont des vues et non des copies
-* la notion de `numpy.ndarray.base`
-* voir les `exercices avancés pour les rapides`
-
-+++ {"tags": ["framed_cell"]}
-
 ## accès aux éléments d'un tableau
 
 ````{admonition} →
 
 *accéder à des éléments ou à des sous-tableaux  
-va nous permettre de leur appliquer des fonctions vectorisées*
+va nous permettrede leur appliquer des fonctions vectorisées*
 
 
 la manière d'accéder aux éléments d'un tableau `numpy`  
@@ -65,6 +54,50 @@ peut être indexé sous différentes dimensions et formes
 * dimension 2, par exemple `(1, 12)` `(6, 2)` `(3, 4)` `(4, 3)`
 * dimension 3, par exemple `(2, 3, 2)`...
 ````
+
++++ {"tags": ["framed_cell"]}
+
+## accès aux éléments d'un tableau
+
+````{admonition} →
+
+*accéder à des éléments ou à des sous-tableaux  
+va nous permettrede leur appliquer des fonctions vectorisées*
+
+
+la manière d'accéder aux éléments d'un tableau `numpy`  
+dépend de la forme du tableau (`shape`)
+
+
+la forme d'un `numpy.ndarray` est donnée par une indexation  
+sur le segment mémoire sous-jacent continu de votre tableau
+
+par exemple  
+un `numpy.ndarray` de `12` éléments
+
+<div class="memory">
+
+```
+☐☐☐☐☐☐☐☐☐☐☐☐
+```
+
+</div>
+
+peut être indexé sous différentes dimensions et formes
+
+* dimension 1, par exemple `(12,)`
+* dimension 2, par exemple `(1, 12)` `(6, 2)` `(3, 4)` `(4, 3)`
+* dimension 3, par exemple `(2, 3, 2)`...
+````
+
++++ {"tags": ["framed_cell"]}
+
+## contenu de ce notebook (sauter si déjà acquis)
+
+* les manières d'accéder à des éléments et de slicer un tableau `numpy`
+* les slices sont des vues et non des copies
+* la notion de `numpy.ndarray.base`
+* voir les `exercices avancés pour les rapides`
 
 +++
 
@@ -224,8 +257,6 @@ tab
 ```
 
 ```{code-cell} ipython3
-:lines_to_next_cell: 2
-
 [tab.shape[i] for i in range(tab.ndim)]
 ```
 
@@ -250,7 +281,16 @@ tab.shape
 4. obtenez-vous 12 ?
 
 ```{code-cell} ipython3
-# votre code
+import numpy as np
+
+#1
+tab=np.linspace(2,60, 30).astype(int)
+#2
+tab=tab.reshape(2,5,3)
+#3
+el=tab[0,1,2]
+#4
+print(el) #OUI
 ```
 
 +++ {"cell_style": "center"}
@@ -277,7 +317,15 @@ tab.shape
 ````
 
 ```{code-cell} ipython3
-# votre code ici
+import numpy as np
+#1
+tab=np.random.randint(10, 20, size=(3,2,5,4))
+#2
+print(tab)
+
+#3
+
+print(f"les deux dernières dimensions ont {tab.shape[2]} et {tab.shape[3]} éléments")
 ```
 
 ## accéder à un sous-tableau (slicing)
@@ -524,7 +572,8 @@ donc
 * idem pour les colonnes
 
 ```{code-cell} ipython3
-# votre code
+tab = np.arange(120).reshape(2, 3, 4, 5)
+tab[:,0,1:-1,1:-1]
 ```
 
 +++ {"tags": ["framed_cell"]}
@@ -674,7 +723,13 @@ tab1.base
 1. vérifiez que les deux `base` sont le même objet
 
 ```{code-cell} ipython3
-# votre code ici
+tab=np.arange(2,26,2).reshape(2,2,3)
+tab.base
+
+tab1=tab[::-1,::-1,::-1]
+tab1.base
+
+tab1.base is tab.base
 ```
 
 +++ {"tags": ["framed_cell"]}
@@ -764,6 +819,25 @@ par exemple pour `n=4` on s'attend à ceci
 
 +++
 
+par exemple pour `n=4` on s'attend à ceci
+
+```console
+0 1 0 1
+0 1 0 1
+0 1 0 1
+0 1 0 1
+```
+
+```{code-cell} ipython3
+import numpy as np
+def zebre(n):
+    tab=np.zeros(shape=(n,n)).astype(int)
+    tab[:,::2]=1
+    return tab
+
+print(zebre(4))
+```
+
 ### le damier
 
 Écrivez une fonction *checkers*, qui prend en argument la taille *n* du damier, et un paramètre optionnel qui indique la valeur de la case (0, 0), et qui crée un tableau `numpy` carré de coté `n`, et le remplit avec des 0 et 1 comme un damier.
@@ -789,9 +863,17 @@ array([[0, 1, 0, 1, 0],
 
 ```{code-cell} ipython3
 # a vous de jouer
+import numpy as np
 
 def checkers(n, up_left=True):
-    pass
+    tab=np.zeros(shape=(n,n)).astype(int)
+    if up_left :
+        tab[::2,::2]=1
+        tab[1::2,1::2]=1
+    if not up_left :
+        tab[::2,1::2]=1
+        tab[1::2,0::2]=1
+    return tab.reshape(n,n)
 ```
 
 ```{code-cell} ipython3
@@ -842,9 +924,14 @@ array([[0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1],
 :tags: [level_advanced]
 
 #  vous de jouer
-
+import numpy as np
 def block_checkers(n, k):
-    pass
+    tab = np.zeros((k*n, k*n), dtype=int)
+    for i in range(n):
+        for j in range(n):
+            if (i + j) % 2 == 1:
+                tab[i*k:(i+1)*k, j*k:(j+1)*k] = 1
+    return tab
 ```
 
 ```{code-cell} ipython3
@@ -891,9 +978,13 @@ array([[0, 1, 2, 3, 4, 3, 2, 1, 0],
 
 ```{code-cell} ipython3
 # à vous de jouer
-
-def stairs(n):
-    pass
+import numpy as np
+def stairs (n):
+    tab=np.zeros((2*n+1,2*n+1)).astype(int)
+    for i in range(2*n+1) : 
+        for j in range(2*n+1):
+            tab[i,j]=2*n-(np.abs(i-n)+np.abs(j-n))
+    return tab
 ```
 
 ```{code-cell} ipython3
