@@ -602,8 +602,16 @@ print(os.path.getsize("les-mines-pil.jpg"))
 ```{code-cell} ipython3
 # votre code
 a = plt.imread("les-mines-plt.jpg").astype(int)
-b = plt.imread("s-pil.jpg").astype(int)
+b = plt.imread("les-mines-pil.jpg").astype(int)
 plt.imshow(np.abs(a - b))
+```
+
+```{code-cell} ipython3
+
+```
+
+```{code-cell} ipython3
+
 ```
 
 ```{code-cell} ipython3
